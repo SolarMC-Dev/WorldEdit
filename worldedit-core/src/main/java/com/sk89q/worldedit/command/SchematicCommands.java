@@ -39,6 +39,7 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 import com.sk89q.worldedit.extent.clipboard.io.share.ClipboardShareDestination;
+import com.sk89q.worldedit.extent.clipboard.io.share.ClipboardShareMetadata;
 import com.sk89q.worldedit.math.transform.Transform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.formatting.component.CodeFormat;
@@ -430,7 +431,7 @@ public class SchematicCommands {
 
         @Override
         public URL call() throws Exception {
-            PasteMetadata metadata = new PasteMetadata();
+            ClipboardShareMetadata metadata = new ClipboardShareMetadata();
             metadata.author = this.actor.getName();
             metadata.name = name == null ? actor.getName() + "-" + System.currentTimeMillis() : name;
 
