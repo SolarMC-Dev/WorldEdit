@@ -141,7 +141,7 @@ public class TestOfflinePermissible implements OfflinePlayer, Permissible {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //@Override // Solar - remove
     public void setBanned(boolean b) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

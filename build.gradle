@@ -15,32 +15,20 @@ println """
 buildscript {
     repositories {
         mavenCentral()
-        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
-        jcenter()
-    }
-
-    configurations.all {
-        resolutionStrategy {
-            force 'com.google.guava:guava:20.0'
-            force 'org.ow2.asm:asm:6.0_BETA'
-        }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.3.0'
+        classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.21.0'
         classpath 'org.ajoberstar:gradle-git:1.5.1'
     }
 }
 
 allprojects {
-    group = 'com.sk89q.worldedit'
+    group = 'gg.solarmc.worldedit'
     version = '6.1.9-SNAPSHOT'
 }
-
-if (!project.hasProperty("artifactory_contextUrl")) ext.artifactory_contextUrl = "http://localhost"
-if (!project.hasProperty("artifactory_user")) ext.artifactory_user = "guest"
-if (!project.hasProperty("artifactory_password")) ext.artifactory_password = ""
 
 if (!project.hasProperty("gitCommitHash") && !JavaVersion.current().isJava6()) {
     try {
@@ -54,50 +42,29 @@ if (!project.hasProperty("gitCommitHash")) {
     ext.gitCommitHash = "no_git_id"
 }
 
-apply plugin: 'com.jfrog.artifactory'
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = project.version.contains("SNAPSHOT") ? 'libs-snapshot-local' : 'libs-release-local'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-            ivy = false
-        }
-    }
-
-    resolve {
-        repository {
-            repoKey = 'repo'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-    }
-}
-artifactoryPublish.skip = true
-
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven'
-    apply plugin: 'checkstyle'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
     apply plugin: 'com.github.johnrengelman.shadow'
-    apply plugin: 'com.jfrog.artifactory'
 
     ext.internalVersion = version + ";" + gitCommitHash
 
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
-
-    checkstyle.configFile = new File(rootProject.projectDir, "config/checkstyle/checkstyle.xml")
-    checkstyle.toolVersion = '7.6.1'
+    sourceCompatibility = 16
+    targetCompatibility = 16
 
     repositories {
         mavenCentral()
-        maven { url "http://repo.bukkit.org/content/groups/public" }
-        maven { url "http://maven.sk89q.com/repo/" }
-        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "https://maven.sk89q.com/repo/" }
+        maven { url "https://mvn-repo.solarmc.gg/releases" }
+        maven { url "https://mvn-repo.arim.space/lesser-gpl3/" }
+    }
+
+    configurations {
+        testImplementation.extendsFrom compileOnly
+    }
+
+    dependencies {
+        testImplementation "junit:junit:4.13.1"
     }
 
     if (JavaVersion.current().isJava8Compatible()) {
@@ -129,12 +96,10 @@ subprojects {
         build.dependsOn(sourcesJar)
     }
 
-    build.dependsOn(checkstyleMain)
-    build.dependsOn(checkstyleTest)
     build.dependsOn(javadocJar)
 
     shadowJar {
-        classifier 'dist'
+        classifier ""
         dependencies {
             include(dependency('com.sk89q:jchronic:0.2.4a'))
             include(dependency('com.thoughtworks.paranamer:paranamer:2.6'))
@@ -145,7 +110,28 @@ subprojects {
         exclude 'LICENSE*'
     }
 
-    artifactoryPublish {
-        publishConfigs('archives')
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                artifact sourcesJar
+                artifact javadocJar
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username System.getenv("REPO_USER")
+                    password System.getenv("REPO_PASS")
+                }
+
+                name = 'solar-repo'
+                def base = 'https://mvn-repo.solarmc.gg'
+                def releasesRepoUrl = "$base/releases"
+                def snapshotsRepoUrl = "$base/snapshots"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ import org.bukkit.World;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.RegionSelector;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An abstraction of WorldEdit regions, which do not use Bukkit objects.

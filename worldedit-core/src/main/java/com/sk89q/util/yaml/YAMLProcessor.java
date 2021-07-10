@@ -82,7 +82,7 @@ public class YAMLProcessor extends YAMLNode {
         super(new LinkedHashMap<String, Object>(), writeDefaults);
         this.format = format;
 
-        DumperOptions options = new FancyDumperOptions();
+        DumperOptions options = new DumperOptions(); // Solar
         options.setIndent(4);
         options.setDefaultFlowStyle(format.getStyle());
         Representer representer = new FancyRepresenter();
@@ -305,6 +305,7 @@ public class YAMLProcessor extends YAMLNode {
         return new YAMLNode(new LinkedHashMap<String, Object>(), writeDefaults);
     }
 
+    /* Solar start - get rid of this
     // This will be included in snakeyaml 1.10, but until then we have to do it manually.
     private class FancyDumperOptions extends DumperOptions {
         @Override
@@ -318,6 +319,7 @@ public class YAMLProcessor extends YAMLNode {
             }
         }
     }
+    */ // Solar end
 
     private static class FancyRepresenter extends Representer {
         private FancyRepresenter() {

@@ -66,28 +66,17 @@ public class CommandRegistration {
     }
 
     public CommandMap getCommandMap() {
-        CommandMap commandMap = ReflectionUtil.getField(plugin.getServer().getPluginManager(), "commandMap");
-        if (commandMap == null) {
-            if (fallbackCommands != null) {
-                commandMap = fallbackCommands;
-            } else {
-                Bukkit.getServer().getLogger().severe(plugin.getDescription().getName() +
-                        ": Could not retrieve server CommandMap, using fallback instead!");
-                fallbackCommands = commandMap = new SimpleCommandMap(Bukkit.getServer());
-                Bukkit.getServer().getPluginManager().registerEvents(new FallbackRegistrationListener(fallbackCommands), plugin);
-            }
-        }
-        return commandMap;
+// Solar start - use proper method
+        return plugin.getServer().getCommandMap();
+// Solar end
     }
 
     public boolean unregisterCommands() {
         CommandMap commandMap = getCommandMap();
         List<String> toRemove = new ArrayList<String>();
-        Map<String, org.bukkit.command.Command> knownCommands = ReflectionUtil.getField(commandMap, "knownCommands");
-        Set<String> aliases = ReflectionUtil.getField(commandMap, "aliases");
-        if (knownCommands == null || aliases == null) {
-            return false;
-        }
+// Solar start - use proper method
+        Map<String, org.bukkit.command.Command> knownCommands = commandMap.getKnownCommands();
+// Solar end
         for (Iterator<org.bukkit.command.Command> i = knownCommands.values().iterator(); i.hasNext();) {
             org.bukkit.command.Command cmd = i.next();
             if (cmd instanceof DynamicPluginCommand && ((DynamicPluginCommand) cmd).getOwner().equals(executor)) {
@@ -95,7 +84,7 @@ public class CommandRegistration {
                 for (String alias : cmd.getAliases()) {
                     org.bukkit.command.Command aliasCmd = knownCommands.get(alias);
                     if (cmd.equals(aliasCmd)) {
-                        aliases.remove(alias);
+                        // aliases.remove(alias); // Solar            
                         toRemove.add(alias);
                     }
                 }

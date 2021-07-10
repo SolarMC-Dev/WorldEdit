@@ -48,7 +48,7 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -106,9 +106,8 @@ public class BukkitWorld extends LocalWorld {
         return list;
     }
 
-    @Nullable
     @Override
-    public com.sk89q.worldedit.entity.Entity createEntity(com.sk89q.worldedit.util.Location location, BaseEntity entity) {
+    public com.sk89q.worldedit.entity.@Nullable Entity createEntity(com.sk89q.worldedit.util.Location location, BaseEntity entity) {
         BukkitImplAdapter adapter = WorldEditPlugin.getInstance().getBukkitImplAdapter();
         if (adapter != null) {
             Entity createdEntity = adapter.createEntity(BukkitAdapter.adapt(getWorld(), location), entity);

@@ -26,7 +26,7 @@ import com.sk89q.worldedit.internal.cui.CUIEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import java.io.File;
 import java.util.UUID;
 
