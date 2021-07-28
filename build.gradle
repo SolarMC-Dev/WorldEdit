@@ -27,7 +27,7 @@ buildscript {
 
 allprojects {
     group = 'gg.solarmc.worldedit'
-    version = '6.1.9-SNAPSHOT'
+    version = '6.1.9'
 }
 
 if (!project.hasProperty("gitCommitHash") && !JavaVersion.current().isJava6()) {
