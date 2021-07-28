@@ -1,17 +1,3 @@
-println """
-*******************************************
- You are building WorldEdit!
-
- If you encounter trouble:
- 1) Read COMPILING.md if you haven't yet
- 2) Try running 'build' in a separate Gradle run
- 3) Use gradlew and not gradle
- 4) If you still need help, ask on IRC! irc.esper.net #sk89q
-
- Output files will be in [subproject]/build/libs
-*******************************************
-"""
-
 buildscript {
     repositories {
         mavenCentral()
@@ -25,9 +11,13 @@ buildscript {
     }
 }
 
+plugins {
+    id "pl.allegro.tech.build.axion-release" version "1.13.3"
+}
+
 allprojects {
     group = 'gg.solarmc.worldedit'
-    version = '6.1.9'
+    project.version = scmVersion.version
 }
 
 if (!project.hasProperty("gitCommitHash") && !JavaVersion.current().isJava6()) {
